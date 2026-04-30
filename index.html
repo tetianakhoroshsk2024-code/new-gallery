@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MakeUp Gallery</title>
+  
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Load React -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  
+  <!-- Load Babel to understand JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    /* Hide scrollbar completely to match the clean aesthetic */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useRef, useState } = React;
+
+    const looks = [
+      {
+        id: 1,
+        tag: 'NATURAL',
+        title: 'Day Look',
+        description: 'Light and natural finish for everyday wear. Enhances your features with a soft, glowing complexion.',
+        image: 'https://i.pinimg.com/736x/f4/cd/15/f4cd15b04dd53fdfcb27e8a9da67481f.jpg',
+        alt: 'Модель з денним натуральним макіяжем: рум\'яна, туш і ніжний рожевий блиск',
+        color: 'bg-cyan-500'
+      },
+      {
+        id: 2,
+        tag: 'ELEGANT',
+        title: 'Evening Look',
+        description: 'Refined and polished for after-hours elegance. Deep tones with a luminous finish for sophisticated style.',
+        image: 'https://images.ctfassets.net/wlke2cbybljx/72kD2EIBLkWHLaDl17cglE/89879edee84abad6796029e1b31b0f2a/033_220026_BEACHSTICKS_HM_ALL_MODELS_2_JB_2306_.jpg',
+        alt: 'Модель з вечірнім макіяжем: насичені темні тони та сяйний фінішний ефект',
+        color: 'bg-blue-400'
+      },
+      {
+        id: 3,
+        tag: 'BOLD',
+        title: 'Festive Look',
+        description: 'Bold and celebratory with glitter accents and vibrant color to make every moment shine.',
+        image: 'https://hips.hearstapps.com/hmg-prod/images/festival-makeup-6613f5bcd7283.png?crop=0.483xw:0.976xh;0,0&resize=640:*',
+        alt: 'Яскравий святковий макіяж із глітером і насиченими кольорами для фестивалю',
+        color: 'bg-gray-100'
+      },
+      {
+        id: 4,
+        tag: 'DRAMATIC',
+        title: 'Smokey Eyes',
+        description: 'Dramatic, sultry eye definition with blended dark tones and intense lash volume for impact.',
+        image: 'https://www.simplynam.com/cdn/shop/articles/Untitled_design_25.jpg?v=1719914274',
+        alt: 'Смокі айс — драматичний макіяж очей із затемненими тінями та об\'ємними віями',
+        color: 'bg-stone-200'
+      },
+      {
+        id: 5,
+        tag: 'MINIMAL',
+        title: 'Nude Look',
+        description: 'Understated sophistication with skin-tone shades that perfect without...',
+        image: 'https://www.byrdie.com/thmb/weKgR-5J0qpSiLMLmvOB-OR3uVI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/IMG_37751-9bf3c6eb6c9c44f8b39662a7a8012351.jpeg', 
+        alt: 'Нюдовий мінімалістичний макіяж у відтінках шкіри для природнього вигляду',
+        color: 'bg-stone-50'
+      }
+    ];
+
+    function App() {
+      const scrollRef = useRef(null);
+      const [selectedLook, setSelectedLook] = useState(null);
+      const [isVisible, setIsVisible] = useState(false);
+
+      const openModal = (look) => {
+        setSelectedLook(look);
+        // Delay ensures the transition kicks in smoothly
+        setTimeout(() => setIsVisible(true), 10);
+      };
+
+      const closeModal = () => {
+        setIsVisible(false);
+        // Wait for slide-out animation to finish before removing modal
+        setTimeout(() => setSelectedLook(null), 300);
+      };
+
+      const scroll = (direction) => {
+        if (scrollRef.current) {
+          const scrollAmount = 244; // Card width + gap
+          scrollRef.current.scrollBy({
+            left: direction === 'left' ? -scrollAmount : scrollAmount,
+            behavior: 'smooth'
+          });
+        }
+      };
+
+      return (
+        <div className="min-h-screen bg-white flex flex-col font-sans text-gray-800 selection:bg-gray-200">
+          
+          {/* Header Section */}
+          <header className="pt-32 pb-16 px-4 flex flex-col items-center text-center">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-gray-400 mb-6 font-medium">
+              Beauty Collection
+            </span>
+            
+            <h1 className="text-5xl md:text-6xl font-light text-gray-900 mb-6 tracking-tight">
+              MakeUp
+            </h1>
+            
+            <span className="text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-8 border-b border-gray-200 pb-2 inline-block px-2">
+              Gallery
+            </span>
+            
+            <p className="text-sm text-gray-500 max-w-sm mx-auto leading-relaxed">
+              Explore curated makeup looks designed for every mood and occasion.
+            </p>
+
+            <a href="https://lpnu.ua/">Перейти на сторінку університету</a>
+          </header>
+
+          {/* Gallery Section */}
+          <main className="w-full mb-20 flex justify-center px-4 md:px-16">
+            <div className="relative w-full max-w-[1200px]">
+              
+              {/* Left Slider Button */}
+              <button 
+                onClick={() => scroll('left')} 
+                className="absolute -left-4 md:-left-12 top-[110px] z-10 p-2 text-gray-400 hover:text-gray-900 bg-white/90 hover:bg-white rounded-full shadow-md border border-gray-100 transition-all hidden sm:flex items-center justify-center backdrop-blur-sm"
+                aria-label="Slide left"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+
+              {/* Horizontal scroll container */}
+              <div 
+                ref={scrollRef}
+                className="flex flex-nowrap overflow-x-auto gap-5 md:gap-6 pb-12 pt-4 snap-x snap-mandatory w-full no-scrollbar"
+              >
+                {looks.map((look) => (
+                  <article 
+                    key={look.id} 
+                    onClick={() => openModal(look)}
+                    className="w-[220px] shrink-0 snap-center bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 overflow-hidden flex flex-col transition-transform duration-300 hover:-translate-y-1 cursor-pointer"
+                  >
+
+                  {/* Image Area */}
+                  <div className={`h-[220px] w-full shrink-0 relative overflow-hidden ${look.color}`}>
+                    <img 
+                      src={look.image} 
+                      alt={look.title}
+                      className="absolute inset-0 object-cover w-full h-full"
+                      loading="lazy"
+                    />
+                    
+                    {/* Tag Badge */}
+                    <div className="absolute top-4 left-4 bg-white px-2 py-1 shadow-sm">
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-gray-800 block">
+                        {look.tag}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Content Area */}
+                  <div className="p-6 flex flex-col items-center flex-grow bg-white text-center">
+                    <h2 className="text-[15px] font-medium text-gray-900 mb-3 tracking-wide">
+                      {look.title}
+                    </h2>
+                    
+                    {/* Centered divider line */}
+                    <div className="w-6 h-[1px] bg-gray-300 mb-4 mx-auto"></div>
+                    
+                    <p className="text-[12px] text-gray-500 leading-relaxed">
+                      {look.description}
+                    </p>
+                  </div>
+                </article>
+              ))}
+              </div>
+
+              {/* Right Slider Button */}
+              <button 
+                onClick={() => scroll('right')} 
+                className="absolute -right-4 md:-right-12 top-[110px] z-10 p-2 text-gray-400 hover:text-gray-900 bg-white/90 hover:bg-white rounded-full shadow-md border border-gray-100 transition-all hidden sm:flex items-center justify-center backdrop-blur-sm"
+                aria-label="Slide right"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+
+            </div>
+          </main>
+
+          {/* New Section: Soft Skills */}
+          <section className="max-w-2xl mx-auto bg-gray-50 p-8 rounded-xl border border-gray-100 shadow-sm">
+            <h2 className="text-xl font-semibold mb-6 text-gray-800 uppercase tracking-wider">
+              My Soft Skills
+            </h2>
+            
+            <ul className="space-y-3 text-gray-600 list-disc list-inside">
+              <li>Комунікабельність та вміння слухати</li>
+              <li>Креативне мислення у вирішенні завдань</li>
+              <li>Тайм-менеджмент та пунктуальність</li>
+              <li>Вміння працювати в команді</li>
+              <li>Стресостійкість у складних ситуаціях</li>
+              <li>Швидко навчаюсь новому</li>
+            </ul>
+          </section>
+
+          {/* Footer Section */}
+          <footer className="mt-auto py-12 border-t border-gray-100 w-full relative">
+            <p className="text-center text-[10px] uppercase tracking-[0.2em] text-gray-400">
+              Makeup Gallery — Created for Modern Beauty
+            </p>
+          </footer>
+
+          {/* Modal Overlay */}
+          {selectedLook && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              {/* Backdrop */}
+              <div 
+                className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ease-out ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                onClick={closeModal}
+              ></div>
+              
+              {/* Close Icon Top Right */}
+              <button 
+                className={`absolute top-6 right-6 text-gray-400 hover:text-white transition-all duration-300 z-50 p-2 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+                onClick={closeModal}
+                aria-label="Close modal"
+              >
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+
+              {/* Modal Container */}
+              <div className={`relative bg-white w-full max-w-[800px] flex flex-col md:flex-row shadow-2xl rounded-md overflow-hidden z-50 transition-all duration-300 ease-out transform ${isVisible ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'}`}>
+                
+                {/* Modal Image Area */}
+                <div className="w-full md:w-1/2 p-6 md:pr-4 h-[350px] md:h-[450px]">
+                  <div className={`w-full h-full relative rounded-sm overflow-hidden ${selectedLook.color}`}>
+                    <img 
+                      src={selectedLook.image} 
+                      alt={selectedLook.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                {/* Modal Content Area */}
+                <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white text-left">
+                  <div className="bg-gray-50 border border-gray-100 px-2 py-1 self-start mb-4 shadow-sm">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-gray-600 block">
+                      {selectedLook.tag}
+                    </span>
+                  </div>
+                  
+                  <h2 className="text-4xl font-light text-gray-900 mb-4 tracking-tight">
+                    {selectedLook.title}
+                  </h2>
+                  
+                  <div className="w-8 h-[1px] bg-gray-300 mb-6"></div>
+                  
+                  <p className="text-[13px] text-gray-500 leading-relaxed mb-8 pr-4">
+                    {selectedLook.description}
+                  </p>
+
+                  <button 
+                    onClick={closeModal}
+                    className="bg-[#111] text-white text-[11px] font-bold uppercase tracking-widest px-8 py-3 w-max hover:bg-black transition-all shadow-sm active:scale-95"
+                  >
+                    Close
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    // Render the React application
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
